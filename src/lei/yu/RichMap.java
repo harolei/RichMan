@@ -35,14 +35,21 @@ public class RichMap {
     }
 
     public String refreshMap(int landPosition) {
-
-        return "S0000100000000H0000000000000T" + '\n' +
-                "$                           0" + '\n' +
-                "$                           0" + '\n' +
-                "$                           0" + '\n' +
-                "$                           0" + '\n' +
-                "$                           0" + '\n' +
-                "$                           0" + '\n' +
-                "M0000000000000P0000000000000G";
+        String map = "";
+        String landLevel = String.valueOf(land[landPosition].getLevel() + 1);
+        land[landPosition].setLandKind(landLevel);
+        for(int i=0;i<29;i++){
+            map += land[i].getLandKind();
+        }
+        map += "\n" + land[69].getLandKind() + "                           " + land[29].getLandKind();
+        map += "\n" + land[68].getLandKind() + "                           " + land[30].getLandKind();
+        map += "\n" + land[67].getLandKind() + "                           " + land[31].getLandKind();
+        map += "\n" + land[66].getLandKind() + "                           " + land[32].getLandKind();
+        map += "\n" + land[65].getLandKind() + "                           " + land[33].getLandKind();
+        map += "\n" + land[64].getLandKind() + "                           " + land[34].getLandKind() + "\n";
+        for(int i=63;i>34;i--){
+            map += land[i].getLandKind();
+        }
+        return map;
     }
 }
