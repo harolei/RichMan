@@ -34,14 +34,14 @@ public class RichMap {
         return map;
     }
     public String getMap() {
-       String map = this.setMap(landsOnTheMap);
-        return map;
+        return this.setMap(landsOnTheMap);
     }
 
     public String refreshMapWhenLandsChanged(int landPosition) {
-        String landLevel = String.valueOf(landsOnTheMap[landPosition].getLevel() + 1);
-        landsOnTheMap[landPosition].setLandKind(landLevel);
-        String map = this.setMap(landsOnTheMap);
-        return map;
+        int landLevel = landsOnTheMap[landPosition].getLevel() + 1;
+        String landKind = String.valueOf(landLevel);
+        landsOnTheMap[landPosition].setLevel(landLevel);
+        landsOnTheMap[landPosition].setLandKind(landKind);
+        return this.setMap(landsOnTheMap);
     }
 }
