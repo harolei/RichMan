@@ -2,8 +2,8 @@ package lei.yu;
 
 public class Land {
     private String owner = null;
-    private int level = 0;
-    private double price = 0;
+    private static int level;
+    private double price;
 
     public void setPrice(double price) {
         this.price = price;
@@ -34,7 +34,7 @@ public class Land {
 
     public int getLevel() {
 
-        return level;
+        return this.level;
     }
 
     public String getOwner() {

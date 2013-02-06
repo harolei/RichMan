@@ -28,8 +28,20 @@ public class RichManTest {
     }
 
     @Test
-    public void should_refresh_the_map_when_the_land_has_changed() throws Exception {
+    public void should_refresh_the_map_when_the_land_is_sold() throws Exception {
         assertThat(map.refreshMapWhenLandsChanged(5),is("S0000100000000H0000000000000T" + '\n' +
+                                                        "$                           0" + '\n' +
+                                                        "$                           0" + '\n' +
+                                                        "$                           0" + '\n' +
+                                                        "$                           0" + '\n' +
+                                                        "$                           0" + '\n' +
+                                                        "$                           0" + '\n' +
+                                                        "M0000000000000P0000000000000G"));
+    }
+
+    @Test
+    public void should_refresh_the_map_when_the_land_is_upgraded() throws Exception {
+        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000200000000H0000000000000T" + '\n' +
                                                         "$                           0" + '\n' +
                                                         "$                           0" + '\n' +
                                                         "$                           0" + '\n' +
