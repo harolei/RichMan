@@ -34,4 +34,15 @@ public class RichMap {
         return map;
     }
 
+    public String refreshMap(int landPosition) {
+
+        return "S0000100000000H0000000000000T" + '\n' +
+                "$                           0" + '\n' +
+                "$                           0" + '\n' +
+                "$                           0" + '\n' +
+                "$                           0" + '\n' +
+                "$                           0" + '\n' +
+                "$                           0" + '\n' +
+                "M0000000000000P0000000000000G";
+    }
 }
