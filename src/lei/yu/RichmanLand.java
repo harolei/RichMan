@@ -1,6 +1,6 @@
 package lei.yu;
 
-public class Land {
+public class RichManLand {
     private String owner = null;
     private static int level;
     private double price;

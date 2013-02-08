@@ -8,11 +8,11 @@ import static org.junit.Assert.assertThat;
 
 public class RichManTest {
 
-    private RichMap map;
+    private RichManMap map;
 
     @Before
     public void setUp() throws Exception {
-        map = new RichMap();
+        map = new RichManMap();
     }
 
     @Test
@@ -49,5 +49,12 @@ public class RichManTest {
                                                         "$                           0" + '\n' +
                                                         "$                           0" + '\n' +
                                                         "M0000000000000P0000000000000G"));
+    }
+
+    @Test
+    public void should_get_the_balance_of_the_gamer() throws Exception {
+        RichManGamer gamer = new RichManGamer();
+        assertThat(gamer.getBalance(),is(10000));
+
     }
 }
