@@ -54,7 +54,7 @@ public class RichManTest {
     @Test
     public void should_get_the_balance_of_the_gamer() throws Exception {
         RichManGamer gamer = new RichManGamer();
-        assertThat(gamer.getBalance(),is(10000));
+        assertThat(gamer.getBalance(),is(10000.0));
 
     }
 }

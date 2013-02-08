@@ -1,10 +1,14 @@
 package lei.yu;
 
 public class RichManLand {
-    private String owner = null;
-    private static int level;
+    private String owner;
+    private int level;
     private double price;
 
+    public RichManLand(){
+        this.level = 0;
+        this.owner = null;
+    }
     public void setPrice(double price) {
         this.price = price;
     }
@@ -33,7 +37,6 @@ public class RichManLand {
     }
 
     public int getLevel() {
-
         return this.level;
     }
 
