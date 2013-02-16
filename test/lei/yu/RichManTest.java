@@ -10,11 +10,13 @@ public class RichManTest {
 
     private RichManMap map;
     private RichManGamer gamer;
+    private RichManLand currentLand;
 
     @Before
     public void setUp() throws Exception {
         map = new RichManMap();
         gamer = new RichManGamer();
+        currentLand = map.getTheCurrentLandGamerIsOn(5);
     }
 
     @Test
@@ -79,7 +81,6 @@ public class RichManTest {
 
     @Test
     public void should_set_the_map_to_display_the_gamer_name_on_the_position_of_the_gamer() throws Exception {
-        RichManLand currentLand = map.getTheCurrentLandGamerIsOn(5);
         currentLand.setGamerIsOnThisLandOrNot(true);
         map.setTheCurrentGamerOnTheLand(5,"A");
         assertThat(map.refreshMapWhenLandsChanged(5),is("S0000A00000000H0000000000000T" + '\n' +
@@ -95,10 +96,14 @@ public class RichManTest {
 
     @Test
     public void should_get_the_balance_of_the_gamer_after_he_bought_a_land() throws Exception {
-        RichManLand currentLand = map.getTheCurrentLandGamerIsOn(5);
         double costOfTheLand = currentLand.getPrice();
         gamer.minusBalanceOfTheGamer(costOfTheLand);
         assertThat(gamer.getBalanceOfTheGamer(),is(9800.0));
+    }
+
+    @Test
+    public void should_get_the_owner_of_the_land() throws Exception {
+
 
     }
 }
