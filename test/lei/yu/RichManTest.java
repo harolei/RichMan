@@ -9,10 +9,12 @@ import static org.junit.Assert.assertThat;
 public class RichManTest {
 
     private RichManMap map;
+    private RichManGamer gamer;
 
     @Before
     public void setUp() throws Exception {
         map = new RichManMap();
+        gamer = new RichManGamer();
     }
 
     @Test
@@ -54,13 +56,18 @@ public class RichManTest {
 
     @Test
     public void should_get_the_initial_balance_of_the_gamer() throws Exception {
-        RichManGamer gamer = new RichManGamer();
         assertThat(gamer.getBalanceOfTheGamer(),is(10000.0));
     }
 
     @Test
     public void should_get_the_initial_position_of_the_gamer() throws Exception {
-        RichManGamer gamer = new RichManGamer();
         assertThat(gamer.getPositionOfTheGamer(),is(0));
+    }
+
+    @Test
+    public void should_get_the_gamers_position_after_move_a_random_steps() throws Exception {
+        int steps = gamer.getRandomStepsBetween1to6();
+        gamer.setPositionOfTheGamer(steps);
+        assertThat(gamer.getPositionOfTheGamer(),is(0+steps));
     }
 }

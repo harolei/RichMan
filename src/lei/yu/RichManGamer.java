@@ -9,7 +9,7 @@ public class RichManGamer {
     }
 
     public void setBalanceOfTheGamer(double balanceOfTheGamer) {
-        this.balanceOfTheGamer = balanceOfTheGamer;
+        this.balanceOfTheGamer += balanceOfTheGamer;
     }
 
     public int getPositionOfTheGamer() {
@@ -26,5 +26,8 @@ public class RichManGamer {
     }
 
 
-
+    public int getRandomStepsBetween1to6() {
+        int stepsTheGamerWillMove = (int)(Math.random()*6)+1;
+        return stepsTheGamerWillMove;
+    }
 }
