@@ -14,8 +14,12 @@ public class RichManGamer {
         return balanceOfTheGamer;
     }
 
-    public void setBalanceOfTheGamer(double balanceOfTheGamer) {
+    public void addBalanceOfTheGamer(double balanceOfTheGamer) {
         this.balanceOfTheGamer += balanceOfTheGamer;
+    }
+
+    public void minusBalanceOfTheGamer(double cost){
+        this.balanceOfTheGamer -= cost;
     }
 
     public int getPositionOfTheGamer() {

@@ -1,8 +1,5 @@
 package lei.yu;
 
-import java.util.Collection;
-import java.util.List;
-
 public class RichManMap {
     private RichManLand[] landsOnTheMap;
     public RichManMap(){
@@ -20,6 +17,7 @@ public class RichManMap {
         for(int i=64;i<70;i++){
             landsOnTheMap[i].setLandKind("$");
         }
+        this.setThePriceOfTheLands();
     }
     private String setMap(){
         String map = "";
@@ -42,10 +40,39 @@ public class RichManMap {
     }
 
     public String refreshMapWhenLandsChanged(int landPosition) {
-        int landLevel = this.landsOnTheMap[landPosition].getLevel() + 1;
-        String landKind = String.valueOf(landLevel);
-        this.landsOnTheMap[landPosition].setLevel(landLevel);
-        this.landsOnTheMap[landPosition].setLandKind(landKind);
+        if(this.landsOnTheMap[landPosition].isGamerIsOnThisLandOrNot()){
+
+        }
+        else{
+            int landLevel = this.landsOnTheMap[landPosition].getLevel() + 1;
+            String landKind = String.valueOf(landLevel);
+            this.landsOnTheMap[landPosition].setLevel(landLevel);
+            this.landsOnTheMap[landPosition].setLandKind(landKind);
+        }
         return this.setMap();
+    }
+
+    private void setThePriceOfTheLands(){
+        for(int i=1;i<28;i++){
+            landsOnTheMap[i].setPrice(200);
+            if(13==i){
+                i++;
+            }
+        }
+        for(int i=29;i<35;i++){
+            landsOnTheMap[i].setPrice(500);
+        }
+        for(int i=36;i<63;i++){
+            landsOnTheMap[i].setPrice(300);
+            if(48==i){
+                i++;
+            }
+        }
+    }
+    public RichManLand getTheCurrentLandGamerIsOn(int gamerPosition){
+        return landsOnTheMap[gamerPosition];
+    }
+    public void setTheCurrentGamerOnTheLand(int gamerPosition,String gamerName){
+        landsOnTheMap[gamerPosition].setLandKind(gamerName);
     }
 }

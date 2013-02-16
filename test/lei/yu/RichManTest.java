@@ -92,4 +92,13 @@ public class RichManTest {
                                                          "M0000000000000P0000000000000G"));
 
     }
+
+    @Test
+    public void should_get_the_balance_of_the_gamer_after_he_bought_a_land() throws Exception {
+        RichManLand currentLand = map.getTheCurrentLandGamerIsOn(5);
+        double costOfTheLand = currentLand.getPrice();
+        gamer.minusBalanceOfTheGamer(costOfTheLand);
+        assertThat(gamer.getBalanceOfTheGamer(),is(9800.0));
+
+    }
 }
