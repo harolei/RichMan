@@ -23,11 +23,13 @@ public class RichManGamer {
     }
 
     public int getPositionOfTheGamer() {
+        if(positionOfTheGamer>69)
+            positionOfTheGamer -=69;
         return positionOfTheGamer;
     }
 
     public void setPositionOfTheGamer(int positionOfTheGamer) {
-        this.positionOfTheGamer = positionOfTheGamer;
+        this.positionOfTheGamer += positionOfTheGamer;
     }
 
     public String getGamerName() {
@@ -39,7 +41,6 @@ public class RichManGamer {
     }
 
     public int getRandomStepsBetween1and6() {
-        int stepsTheGamerWillMove = (int)(Math.random()*6)+1;
-        return stepsTheGamerWillMove;
+        return (int)(Math.random()*6)+1;
     }
 }

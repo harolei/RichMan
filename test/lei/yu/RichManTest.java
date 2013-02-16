@@ -103,7 +103,12 @@ public class RichManTest {
 
     @Test
     public void should_get_the_owner_of_the_land() throws Exception {
-
+        gamer.setGamerName("A");
+        String gamerName = gamer.getGamerName();
+        double costOfTheLand = currentLand.getPrice();
+        currentLand.setOwner(gamerName);
+        gamer.minusBalanceOfTheGamer(costOfTheLand);
+        assertThat(currentLand.getOwner(),is("A"));
 
     }
 }
