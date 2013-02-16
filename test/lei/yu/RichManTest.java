@@ -41,6 +41,7 @@ public class RichManTest {
 
     @Test
     public void should_refresh_the_map_when_the_land_is_upgraded() throws Exception {
+        map.refreshMapWhenLandsChanged(5);
         assertThat(map.refreshMapWhenLandsChanged(5),is("S0000200000000H0000000000000T" + '\n' +
                                                         "$                           0" + '\n' +
                                                         "$                           0" + '\n' +
@@ -52,9 +53,14 @@ public class RichManTest {
     }
 
     @Test
-    public void should_get_the_balance_of_the_gamer() throws Exception {
+    public void should_get_the_initial_balance_of_the_gamer() throws Exception {
         RichManGamer gamer = new RichManGamer();
-        assertThat(gamer.getBalance(),is(10000.0));
+        assertThat(gamer.getBalanceOfTheGamer(),is(10000.0));
+    }
 
+    @Test
+    public void should_get_the_initial_position_of_the_gamer() throws Exception {
+        RichManGamer gamer = new RichManGamer();
+        assertThat(gamer.getPositionOfTheGamer(),is(0));
     }
 }
