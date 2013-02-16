@@ -66,8 +66,30 @@ public class RichManTest {
 
     @Test
     public void should_get_the_gamers_position_after_move_a_random_steps() throws Exception {
-        int steps = gamer.getRandomStepsBetween1to6();
+        int steps = gamer.getRandomStepsBetween1and6();
         gamer.setPositionOfTheGamer(steps);
-        assertThat(gamer.getPositionOfTheGamer(),is(0+steps));
+        assertThat(gamer.getPositionOfTheGamer(), is(steps));
+    }
+
+    @Test
+    public void should_get_the_name_of_the_gamer() throws Exception {
+        gamer.setGamerName("A");
+        assertThat(gamer.getGamerName(),is("A"));
+    }
+
+    @Test
+    public void should_set_the_map_to_display_the_gamer_name_on_the_position_of_the_gamer() throws Exception {
+        RichManLand currentLand = map.getTheCurrentLandGamerIsOn(5);
+        currentLand.setGamerIsOnThisLandOrNot(true);
+        map.setTheCurrentGamerOnTheLand(5,"A");
+        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000A00000000H0000000000000T" + '\n' +
+                                                         "$                           0" + '\n' +
+                                                         "$                           0" + '\n' +
+                                                         "$                           0" + '\n' +
+                                                         "$                           0" + '\n' +
+                                                         "$                           0" + '\n' +
+                                                         "$                           0" + '\n' +
+                                                         "M0000000000000P0000000000000G"));
+
     }
 }

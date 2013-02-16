@@ -3,6 +3,12 @@ package lei.yu;
 public class RichManGamer {
     private double balanceOfTheGamer;
     private int positionOfTheGamer;
+    private String gamerName;
+
+    public RichManGamer(){
+        this.balanceOfTheGamer = 10000;
+        this.positionOfTheGamer = 0;
+    }
 
     public double getBalanceOfTheGamer() {
         return balanceOfTheGamer;
@@ -20,13 +26,15 @@ public class RichManGamer {
         this.positionOfTheGamer = positionOfTheGamer;
     }
 
-    public RichManGamer(){
-        this.balanceOfTheGamer = 10000;
-        this.positionOfTheGamer = 0;
+    public String getGamerName() {
+        return gamerName;
     }
 
+    public void setGamerName(String gamerName) {
+        this.gamerName = gamerName;
+    }
 
-    public int getRandomStepsBetween1to6() {
+    public int getRandomStepsBetween1and6() {
         int stepsTheGamerWillMove = (int)(Math.random()*6)+1;
         return stepsTheGamerWillMove;
     }
