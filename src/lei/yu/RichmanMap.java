@@ -1,78 +1,136 @@
 package lei.yu;
 
+import enigma.console.Console;
+import enigma.console.TextAttributes;
+import enigma.core.Enigma;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class RichManMap {
-    private RichManLand[] landsOnTheMap;
+    private List<RichManLand> landsOnTheMap;
     public RichManMap(){
-        landsOnTheMap = new RichManLand[70];
+        landsOnTheMap = new ArrayList<RichManLand>();
         for(int i=0;i<70;i++){
-            landsOnTheMap[i] = new RichManLand();
-            landsOnTheMap[i].setLandKind("0");
+            landsOnTheMap.add(new RichManLand());
+            landsOnTheMap.get(i).setLandKind("0");
+            landsOnTheMap.get(i).setOwner("");
             }
-        landsOnTheMap[0].setLandKind("S");
-        landsOnTheMap[14].setLandKind("H");
-        landsOnTheMap[28].setLandKind("T");
-        landsOnTheMap[35].setLandKind("G");
-        landsOnTheMap[49].setLandKind("P");
-        landsOnTheMap[63].setLandKind("M");
+        landsOnTheMap.get(0).setLandKind("S");
+        landsOnTheMap.get(14).setLandKind("H");
+        landsOnTheMap.get(28).setLandKind("T");
+        landsOnTheMap.get(35).setLandKind("G");
+        landsOnTheMap.get(49).setLandKind("P");
+        landsOnTheMap.get(63).setLandKind("M");
         for(int i=64;i<70;i++){
-            landsOnTheMap[i].setLandKind("$");
+            landsOnTheMap.get(i).setLandKind("$");
         }
         this.setThePriceOfTheLands();
     }
     private String setMap(){
         String map = "";
         for(int i=0;i<29;i++){
-            map += landsOnTheMap[i].getLandKind();
+            map += landsOnTheMap.get(i).getLandKind();
         }
-        map += "\n" + landsOnTheMap[69].getLandKind() + "                           " + landsOnTheMap[29].getLandKind();
-        map += "\n" + landsOnTheMap[68].getLandKind() + "                           " + landsOnTheMap[30].getLandKind();
-        map += "\n" + landsOnTheMap[67].getLandKind() + "                           " + landsOnTheMap[31].getLandKind();
-        map += "\n" + landsOnTheMap[66].getLandKind() + "                           " + landsOnTheMap[32].getLandKind();
-        map += "\n" + landsOnTheMap[65].getLandKind() + "                           " + landsOnTheMap[33].getLandKind();
-        map += "\n" + landsOnTheMap[64].getLandKind() + "                           " + landsOnTheMap[34].getLandKind() + "\n";
+        map += "\n" + landsOnTheMap.get(69).getLandKind() + "                           " + landsOnTheMap.get(29).getLandKind();
+        map += "\n" + landsOnTheMap.get(68).getLandKind() + "                           " + landsOnTheMap.get(30).getLandKind();
+        map += "\n" + landsOnTheMap.get(67).getLandKind() + "                           " + landsOnTheMap.get(31).getLandKind();
+        map += "\n" + landsOnTheMap.get(66).getLandKind() + "                           " + landsOnTheMap.get(32).getLandKind();
+        map += "\n" + landsOnTheMap.get(65).getLandKind() + "                           " + landsOnTheMap.get(33).getLandKind();
+        map += "\n" + landsOnTheMap.get(64).getLandKind() + "                           " + landsOnTheMap.get(34).getLandKind() + "\n";
+
         for(int i=63;i>34;i--) {
-            map += landsOnTheMap[i].getLandKind();
+            map += landsOnTheMap.get(i).getLandKind();
         }
         return map;
+    }
+
+    public void printMap(){
+        TextAttributes attributes = new TextAttributes(Color.WHITE);
+        console.setTextAttributes(attributes);
+        for(int i=0;i<29;i++){
+            attributes = getTextColor(i);
+            console.setTextAttributes(attributes);
+            System.out.print(landsOnTheMap.get(i).getLandKind());
+        }
+        System.out.print("\n");
+        for(int i=0;i<6;i++){
+            attributes = getTextColor(69-i);
+            console.setTextAttributes(attributes);
+            System.out.print(landsOnTheMap.get(69-i).getLandKind()+"                           ");
+            attributes = getTextColor(29+i);
+            console.setTextAttributes(attributes);
+            System.out.print(landsOnTheMap.get(29+i).getLandKind()+"\n");
+        }
+        for(int i=63;i>34;i--) {
+            attributes = getTextColor(i);
+            console.setTextAttributes(attributes);
+            System.out.print(landsOnTheMap.get(i).getLandKind());
+        }
+        System.out.print("\n");
     }
     public String getMap() {
         return this.setMap();
     }
 
     public String refreshMapWhenLandsChanged(int landPosition) {
-        if(this.landsOnTheMap[landPosition].isGamerIsOnThisLandOrNot()){
+        if(this.landsOnTheMap.get(landPosition).isGamerIsOnThisLandOrNot()){
 
         }
         else{
-            int landLevel = this.landsOnTheMap[landPosition].getLevel() + 1;
+            int landLevel = this.landsOnTheMap.get(landPosition).getLevel() + 1;
             String landKind = String.valueOf(landLevel);
-            this.landsOnTheMap[landPosition].setLevel(landLevel);
-            this.landsOnTheMap[landPosition].setLandKind(landKind);
+            this.landsOnTheMap.get(landPosition).setLandKind(landKind);
+            this.landsOnTheMap.get(landPosition).setLevel(landLevel);
         }
         return this.setMap();
     }
 
     private void setThePriceOfTheLands(){
         for(int i=1;i<28;i++){
-            landsOnTheMap[i].setPrice(200);
+            landsOnTheMap.get(i).setPrice(200);
             if(13==i){
                 i++;
             }
         }
         for(int i=29;i<35;i++){
-            landsOnTheMap[i].setPrice(500);
+            landsOnTheMap.get(i).setPrice(500);
         }
         for(int i=36;i<63;i++){
-            landsOnTheMap[i].setPrice(300);
+            landsOnTheMap.get(i).setPrice(300);
             if(48==i){
                 i++;
             }
         }
     }
     public RichManLand getTheCurrentLandGamerIsOn(int gamerPosition){
-        return landsOnTheMap[gamerPosition];
+        return landsOnTheMap.get(gamerPosition);
     }
     public void setTheCurrentGamerOnTheLand(int gamerPosition,String gamerName){
-        landsOnTheMap[gamerPosition].setLandKind(gamerName);
+        landsOnTheMap.get(gamerPosition).setLandKind(gamerName);
+    }
+    private static final Console console;
+    static
+    {
+        console = Enigma.getConsole("Hello World!");
+    }
+
+    private TextAttributes getTextColor(int textIndex){
+        TextAttributes attributes = new TextAttributes(Color.WHITE);
+        RichManLand land = landsOnTheMap.get(textIndex);
+        if(land.getOwner().equals("Q")||land.getLandKind().equals("Q")){
+            attributes = new TextAttributes(Color.RED);
+        }
+        else if(land.getOwner().equals("X")||land.getLandKind().equals("X")){
+            attributes = new TextAttributes(Color.GREEN);
+        }
+        else if(land.getOwner().equals("A")||land.getLandKind().equals("A")){
+            attributes = new TextAttributes(Color.YELLOW);
+        }
+        else if(land.getOwner().equals("J")||land.getLandKind().equals("J")){
+            attributes = new TextAttributes(Color.BLUE);
+        }
+        return attributes;
     }
 }

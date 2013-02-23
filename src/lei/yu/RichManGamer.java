@@ -4,6 +4,15 @@ public class RichManGamer {
     private double balanceOfTheGamer;
     private int positionOfTheGamer;
     private String gamerName;
+    private int landNumOfGamer = 0;
+
+    public int getLandNumOfGamer() {
+        return landNumOfGamer;
+    }
+
+    public void setLandNumOfGamer(int landNumOfGamer) {
+        this.landNumOfGamer += landNumOfGamer;
+    }
 
     public RichManGamer(){
         this.balanceOfTheGamer = 10000;
