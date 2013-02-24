@@ -85,7 +85,7 @@ public class RichManMap {
 
             }
             else{
-               int landLevel = this.landsOnTheMap.get(landPosition).getLevel() + 1;
+               int landLevel = this.landsOnTheMap.get(landPosition).getLevel();
                landKind = String.valueOf(landLevel);
                this.landsOnTheMap.get(landPosition).setLandKind(landKind);
                this.landsOnTheMap.get(landPosition).setLevel(landLevel);
@@ -120,7 +120,7 @@ public class RichManMap {
     private static final Console console;
     static
     {
-        console = Enigma.getConsole("Hello World!");
+        console = Enigma.getConsole("大富翁游戏");
     }
 
     private TextAttributes getTextColor(int textIndex){
@@ -130,17 +130,33 @@ public class RichManMap {
 
         }
         else{
-            if(land.getOwner().getGamerName().equals("Q")||land.getLandKind().equals("Q")){
-                attributes = new TextAttributes(Color.RED);
+            if(land.isGamerIsOnThisLandOrNot()){
+                if(land.getLandKind().equals("Q")){
+                    attributes = new TextAttributes(Color.RED);
+                }
+                else if(land.getLandKind().equals("X")){
+                    attributes = new TextAttributes(Color.GREEN);
+                }
+                else if(land.getLandKind().equals("A")){
+                    attributes = new TextAttributes(Color.YELLOW);
+                }
+                else if(land.getLandKind().equals("J")){
+                    attributes = new TextAttributes(Color.BLUE);
+                }
             }
-            else if(land.getOwner().getGamerName().equals("X")||land.getLandKind().equals("X")){
-                attributes = new TextAttributes(Color.GREEN);
-            }
-            else if(land.getOwner().getGamerName().equals("A")||land.getLandKind().equals("A")){
-                attributes = new TextAttributes(Color.YELLOW);
-            }
-            else if(land.getOwner().getGamerName().equals("J")||land.getLandKind().equals("J")){
-                attributes = new TextAttributes(Color.BLUE);
+            else{
+                if(land.getOwner().getGamerName().equals("Q")){
+                    attributes = new TextAttributes(Color.RED);
+                }
+                else if(land.getOwner().getGamerName().equals("X")){
+                    attributes = new TextAttributes(Color.GREEN);
+                }
+                else if(land.getOwner().getGamerName().equals("A")){
+                    attributes = new TextAttributes(Color.YELLOW);
+                }
+                else if(land.getOwner().getGamerName().equals("J")){
+                    attributes = new TextAttributes(Color.BLUE);
+                }
             }
         }
         return attributes;

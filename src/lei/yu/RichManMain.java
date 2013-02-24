@@ -87,6 +87,7 @@ public class RichManMain {
                             System.out.println("购买成功！");
                             currentLand.setOwner(actionGamer);
                             map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
+                            currentLand.setLevel(currentLand.getLevel()+1);
                             map.printMap();
                             actionGamer.setLandNumOfGamer(1);
                         }
@@ -144,7 +145,8 @@ public class RichManMain {
                     sellLand.setLandKind("0");
                     sellLand.setLevel(0);
                     System.out.println("出售成功！您的余额增加了："+currentLandCost+".");
-                    System.out.println(map.refreshMapWhenLandsChanged(actionGamer.getPositionOfTheGamer()));
+                    actionGamer.getPositionOfTheGamer();
+                    map.printMap();
                 }
             }
 
