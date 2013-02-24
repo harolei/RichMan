@@ -1,12 +1,7 @@
 package lei.yu;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
-
-import enigma.console.Console;
-import enigma.console.TextAttributes;
-import enigma.core.Enigma;
 
 public class RichManMain {
     private static RichManMap map = new RichManMap();
@@ -14,8 +9,6 @@ public class RichManMain {
     private static List<RichManGamer> richManGamers = new ArrayList<RichManGamer>();
 
     public static void main(String[] args){
-        TextAttributes attributes = new TextAttributes(Color.BLUE);
-        console.setTextAttributes(attributes);
         String[] gamerNames = {"Q","A","X","J"};
         System.out.println("请选择2~4位不重复玩家，输入编号即可。(1.钱夫人; 2.阿土伯; 3.孙小美; 4.金贝贝):");
         int[] gamerIndexes = getGamers();
@@ -27,7 +20,10 @@ public class RichManMain {
         while(numOfGamers>1){
             for(int i=0;i<numOfGamers;i++){
                 RichManGamer actionGamer = richManGamers.get(i);
-                System.out.println("玩家"+actionGamer.getGamerName()+"行动，请输入命令：");
+                int presentPosition = actionGamer.getPositionOfTheGamer();
+                RichManLand currentLand = map.getTheCurrentLandGamerIsOn(presentPosition);
+                currentLand.setGamerIsOnThisLandOrNot(false);
+                map.refreshMapWhenLandsChanged(presentPosition);
                 gamerAction(actionGamer);
                 if(actionGamer.getBalanceOfTheGamer()<=0 && actionGamer.getLandNumOfGamer()==0){
                     System.out.println("对不起，您已经破产，游戏失败。");
@@ -37,11 +33,8 @@ public class RichManMain {
             numOfGamers = richManGamers.size();
         }
 
-    }
-    private static final Console console;
-    static
-    {
-        console = Enigma.getConsole("Hello World!");
+        System.out.println("恭喜您，玩家"+richManGamers.get(0).getGamerName()+"获得游戏胜利！");
+
     }
 
     private static String getCommand(){
@@ -66,6 +59,7 @@ public class RichManMain {
     }
 
     private static void gamerAction(RichManGamer actionGamer){
+        System.out.println("玩家"+actionGamer.getGamerName()+"行动，请输入命令：");
         String command = getCommand();
         String gamerName = actionGamer.getGamerName();
         int stepsGamerMoves;
@@ -91,11 +85,9 @@ public class RichManMain {
                         actionGamer.minusBalanceOfTheGamer(currentLand.getPrice());
                         if(actionGamer.getBalanceOfTheGamer()>0){
                             System.out.println("购买成功！");
-                            currentLand.setOwner(gamerName);
+                            currentLand.setOwner(actionGamer);
                             map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
                             map.printMap();
-                            currentLand.setGamerIsOnThisLandOrNot(false);
-                            map.refreshMapWhenLandsChanged(actionGamer.getPositionOfTheGamer());
                             actionGamer.setLandNumOfGamer(1);
                         }
                         else{
@@ -105,14 +97,15 @@ public class RichManMain {
                     }
                 }
                 else{
-                    if(currentLand.getOwner().equals(gamerName)){
+                    RichManGamer currentLandOwner = currentLand.getOwner();
+                    if(currentLandOwner.getGamerName().equals(gamerName)){
                         System.out.println("您移动到了您的土地，该土地目前等级为："+currentLand.getLevel()+"，升级需要"+currentLand.getPrice()+". 是否进行升级？(是[Y],否[N])");
                         String ifUpgrade = getCommand();
                         if(ifUpgrade.equalsIgnoreCase("Y")){
                             actionGamer.minusBalanceOfTheGamer(currentLand.getPrice());
                             if(actionGamer.getBalanceOfTheGamer()>0){
                                 System.out.println("升级成功！");
-                                currentLand.setOwner(gamerName);
+                                currentLand.setOwner(actionGamer);
                                 map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
                                 currentLand.setGamerIsOnThisLandOrNot(false);
                                 map.refreshMapWhenLandsChanged(actionGamer.getPositionOfTheGamer());
@@ -126,7 +119,13 @@ public class RichManMain {
                         }
                     }
                     else{
-                        //移动到别人的土地
+                        System.out.println("您移动到了玩家"+currentLandOwner.getGamerName()+"的土地。");
+                        double tolls = currentLand.getPrice()*currentLand.getLevel()*0.2;
+                        System.out.println("该土地收取过路费："+ tolls +"元。");
+                        actionGamer.minusBalanceOfTheGamer(tolls);
+                        currentLandOwner.addBalanceOfTheGamer(tolls);
+                        map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
+                        map.printMap();
                     }
                 }
 
@@ -136,7 +135,7 @@ public class RichManMain {
         if(command.startsWith("sell")){
             int indexOfLand = Integer.valueOf(command.substring(5));
             RichManLand sellLand = getSpecifiedLand(indexOfLand);
-            if(sellLand.getOwner().equals(gamerName)){
+            if(sellLand.getOwner().getGamerName().equals(gamerName)){
                 System.out.println("您是否准备出售该块土地？(是[Y],否[N])");
                 String ifSell = getCommand();
                 if(ifSell.equalsIgnoreCase("Y")){

@@ -15,7 +15,7 @@ public class RichManMap {
         for(int i=0;i<70;i++){
             landsOnTheMap.add(new RichManLand());
             landsOnTheMap.get(i).setLandKind("0");
-            landsOnTheMap.get(i).setOwner("");
+            landsOnTheMap.get(i).setOwner(null);
             }
         landsOnTheMap.get(0).setLandKind("S");
         landsOnTheMap.get(14).setLandKind("H");
@@ -79,10 +79,17 @@ public class RichManMap {
 
         }
         else{
-            int landLevel = this.landsOnTheMap.get(landPosition).getLevel() + 1;
-            String landKind = String.valueOf(landLevel);
-            this.landsOnTheMap.get(landPosition).setLandKind(landKind);
-            this.landsOnTheMap.get(landPosition).setLevel(landLevel);
+            String landKind = this.landsOnTheMap.get(landPosition).getLandKind();
+            if(landKind.equals("S")||landKind.equals("H")||landKind.equals("T")||landKind.equals("G")||landKind.equals("P")
+                    ||landKind.equals("M")||landKind.equals("$")){
+
+            }
+            else{
+               int landLevel = this.landsOnTheMap.get(landPosition).getLevel() + 1;
+               landKind = String.valueOf(landLevel);
+               this.landsOnTheMap.get(landPosition).setLandKind(landKind);
+               this.landsOnTheMap.get(landPosition).setLevel(landLevel);
+            }
         }
         return this.setMap();
     }
@@ -119,17 +126,22 @@ public class RichManMap {
     private TextAttributes getTextColor(int textIndex){
         TextAttributes attributes = new TextAttributes(Color.WHITE);
         RichManLand land = landsOnTheMap.get(textIndex);
-        if(land.getOwner().equals("Q")||land.getLandKind().equals("Q")){
-            attributes = new TextAttributes(Color.RED);
+        if(land.getOwner() == null){
+
         }
-        else if(land.getOwner().equals("X")||land.getLandKind().equals("X")){
-            attributes = new TextAttributes(Color.GREEN);
-        }
-        else if(land.getOwner().equals("A")||land.getLandKind().equals("A")){
-            attributes = new TextAttributes(Color.YELLOW);
-        }
-        else if(land.getOwner().equals("J")||land.getLandKind().equals("J")){
-            attributes = new TextAttributes(Color.BLUE);
+        else{
+            if(land.getOwner().getGamerName().equals("Q")||land.getLandKind().equals("Q")){
+                attributes = new TextAttributes(Color.RED);
+            }
+            else if(land.getOwner().getGamerName().equals("X")||land.getLandKind().equals("X")){
+                attributes = new TextAttributes(Color.GREEN);
+            }
+            else if(land.getOwner().getGamerName().equals("A")||land.getLandKind().equals("A")){
+                attributes = new TextAttributes(Color.YELLOW);
+            }
+            else if(land.getOwner().getGamerName().equals("J")||land.getLandKind().equals("J")){
+                attributes = new TextAttributes(Color.BLUE);
+            }
         }
         return attributes;
     }

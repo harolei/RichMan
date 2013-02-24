@@ -106,9 +106,9 @@ public class RichManTest {
         gamer.setGamerName("A");
         String gamerName = gamer.getGamerName();
         double costOfTheLand = currentLand.getPrice();
-        currentLand.setOwner(gamerName);
+        currentLand.setOwner(gamer);
         gamer.minusBalanceOfTheGamer(costOfTheLand);
-        assertThat(currentLand.getOwner(),is("A"));
+        assertThat(currentLand.getOwner().getGamerName(),is("A"));
 
     }
 }

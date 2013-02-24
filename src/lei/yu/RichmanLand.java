@@ -1,7 +1,7 @@
 package lei.yu;
 
 public class RichManLand {
-    private String owner;
+    private RichManGamer owner;
     private int level;
     private double price;
     private boolean gamerIsOnThisLandOrNot = false;
@@ -38,7 +38,7 @@ public class RichManLand {
 
     private String landKind;
 
-    public void setOwner(String owner) {
+    public void setOwner(RichManGamer owner) {
         this.owner = owner;
     }
 
@@ -50,7 +50,7 @@ public class RichManLand {
         return this.level;
     }
 
-    public String getOwner() {
+    public RichManGamer getOwner() {
         return owner;
     }
 }
