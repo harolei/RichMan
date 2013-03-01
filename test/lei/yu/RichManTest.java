@@ -79,20 +79,20 @@ public class RichManTest {
         assertThat(gamer.getGamerName(),is("A"));
     }
 
-    @Test
-    public void should_set_the_map_to_display_the_gamer_name_on_the_position_of_the_gamer() throws Exception {
-        currentLand.setGamerIsOnThisLandOrNot(true);
-        map.setTheCurrentGamerOnTheLand(5,"A");
-        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000A00000000H0000000000000T" + '\n' +
-                                                         "$                           0" + '\n' +
-                                                         "$                           0" + '\n' +
-                                                         "$                           0" + '\n' +
-                                                         "$                           0" + '\n' +
-                                                         "$                           0" + '\n' +
-                                                         "$                           0" + '\n' +
-                                                         "M0000000000000P0000000000000G"));
-
-    }
+//    @Test
+//    public void should_set_the_map_to_display_the_gamer_name_on_the_position_of_the_gamer() throws Exception {
+//        currentLand.setGamerIsOnThisLandOrNot(true);
+//        map.setTheCurrentGamerOnTheLand(5,"A");
+//        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000A00000000H0000000000000T" + '\n' +
+//                                                         "$                           0" + '\n' +
+//                                                         "$                           0" + '\n' +
+//                                                         "$                           0" + '\n' +
+//                                                         "$                           0" + '\n' +
+//                                                         "$                           0" + '\n' +
+//                                                         "$                           0" + '\n' +
+//                                                         "M0000000000000P0000000000000G"));
+//
+//    }
 
     @Test
     public void should_get_the_balance_of_the_gamer_after_he_bought_a_land() throws Exception {

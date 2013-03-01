@@ -1,7 +1,12 @@
 package lei.yu;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import enigma.console.Console;
+import enigma.console.TextAttributes;
+import enigma.core.Enigma;
 
 public class RichManMain {
     private static RichManMap map = new RichManMap();
@@ -13,6 +18,7 @@ public class RichManMain {
         System.out.println("请选择2~4位不重复玩家，输入编号即可。(1.钱夫人; 2.阿土伯; 3.孙小美; 4.金贝贝):");
         int[] gamerIndexes = getGamers();
 
+
         for(int i=0;i<numOfGamers;i++){
             richManGamers.add(new RichManGamer());
             richManGamers.get(i).setGamerName(gamerNames[gamerIndexes[i]-1]);
@@ -22,8 +28,10 @@ public class RichManMain {
                 RichManGamer actionGamer = richManGamers.get(i);
                 int presentPosition = actionGamer.getPositionOfTheGamer();
                 RichManLand currentLand = map.getTheCurrentLandGamerIsOn(presentPosition);
-                currentLand.setGamerIsOnThisLandOrNot(false);
                 map.refreshMapWhenLandsChanged(presentPosition);
+                if(!currentLand.getGamersOnThisLand().isEmpty()){
+                   currentLand.removeGamerOnThisLand();
+                }
                 gamerAction(actionGamer);
                 if(actionGamer.getBalanceOfTheGamer()<=0 && actionGamer.getLandNumOfGamer()==0){
                     System.out.println("对不起，您已经破产，游戏失败。");
@@ -59,7 +67,15 @@ public class RichManMain {
     }
 
     private static void gamerAction(RichManGamer actionGamer){
-        System.out.println("玩家"+actionGamer.getGamerName()+"行动，请输入命令：");
+        TextAttributes attributes = new TextAttributes(Color.WHITE);
+        console.setTextAttributes(attributes);
+        System.out.print("玩家");
+        attributes = getTextColor(actionGamer.getGamerName());
+        console.setTextAttributes(attributes);
+        System.out.print("  "+actionGamer.getGamerName()+" ");
+        attributes = new TextAttributes(Color.WHITE);
+        console.setTextAttributes(attributes);
+        System.out.print("行动，请输入命令："+"\n");
         String command = getCommand();
         String gamerName = actionGamer.getGamerName();
         int stepsGamerMoves;
@@ -70,11 +86,10 @@ public class RichManMain {
             System.out.println("您骰到的点数为："+stepsGamerMoves+", 您可以移动"+stepsGamerMoves+"步。");
             RichManLand currentLand = getSpecifiedLand(actionGamer.getPositionOfTheGamer());
             String landKind = currentLand.getLandKind();
-            currentLand.setGamerIsOnThisLandOrNot(true);
+            currentLand.addGamersOnThisLand(gamerName);
             if(landKind.equals("S")||landKind.equals("H")||landKind.equals("T")||landKind.equals("G")||landKind.equals("P")
                     ||landKind.equals("M")||landKind.equals("$")){
                 currentLand.setLandKind(gamerName);
-                currentLand.setGamerIsOnThisLandOrNot(false);
                 currentLand.setLandKind(landKind);
             }
             else{
@@ -86,7 +101,6 @@ public class RichManMain {
                         if(actionGamer.getBalanceOfTheGamer()>0){
                             System.out.println("购买成功！");
                             currentLand.setOwner(actionGamer);
-                            map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
                             currentLand.setLevel(currentLand.getLevel()+1);
                             map.printMap();
                             actionGamer.setLandNumOfGamer(1);
@@ -107,8 +121,6 @@ public class RichManMain {
                             if(actionGamer.getBalanceOfTheGamer()>0){
                                 System.out.println("升级成功！");
                                 currentLand.setOwner(actionGamer);
-                                map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
-                                currentLand.setGamerIsOnThisLandOrNot(false);
                                 map.refreshMapWhenLandsChanged(actionGamer.getPositionOfTheGamer());
                             }
                             else{
@@ -120,12 +132,17 @@ public class RichManMain {
                         }
                     }
                     else{
-                        System.out.println("您移动到了玩家"+currentLandOwner.getGamerName()+"的土地。");
+                        System.out.print("您移动到了玩家");
+                        attributes = getTextColor(currentLandOwner.getGamerName());
+                        console.setTextAttributes(attributes);
+                        System.out.print("      "+currentLandOwner.getGamerName()+" ");
+                        attributes = new TextAttributes(Color.WHITE);
+                        console.setTextAttributes(attributes);
+                        System.out.print("的土地。"+"\n");
                         double tolls = currentLand.getPrice()*currentLand.getLevel()*0.2;
                         System.out.println("该土地收取过路费："+ tolls +"元。");
                         actionGamer.minusBalanceOfTheGamer(tolls);
                         currentLandOwner.addBalanceOfTheGamer(tolls);
-                        map.setTheCurrentGamerOnTheLand(actionGamer.getPositionOfTheGamer(),gamerName);
                         map.printMap();
                     }
                 }
@@ -149,8 +166,36 @@ public class RichManMain {
                     map.printMap();
                 }
             }
+            else{
+                System.out.println("这并不是您的土地，不能出售。");
+            }
+
+        }
+        if(command.equals("query")){
 
         }
 
+    }
+
+    private static TextAttributes getTextColor(String gamerName){
+        TextAttributes attributes = new TextAttributes(Color.WHITE);
+        if(gamerName.equals("Q")){
+            attributes = new TextAttributes(Color.RED);
+        }
+        else if(gamerName.equals("X")){
+            attributes = new TextAttributes(Color.GREEN);
+        }
+        else if(gamerName.equals("A")){
+            attributes = new TextAttributes(Color.YELLOW);
+        }
+        else if(gamerName.equals("J")){
+            attributes = new TextAttributes(Color.BLUE);
+        }
+        return attributes;
+    }
+    private static final Console console;
+    static
+    {
+        console = Enigma.getConsole("大富翁游戏");
     }
 }
