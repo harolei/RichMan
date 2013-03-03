@@ -3,6 +3,7 @@ package lei.yu;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -31,30 +32,30 @@ public class RichManTest {
                                    "M0000000000000P0000000000000G"));
     }
 
-    @Test
-    public void should_refresh_the_map_when_the_land_is_sold() throws Exception {
-        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000100000000H0000000000000T" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "M0000000000000P0000000000000G"));
-    }
-
-    @Test
-    public void should_refresh_the_map_when_the_land_is_upgraded() throws Exception {
-        map.refreshMapWhenLandsChanged(5);
-        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000200000000H0000000000000T" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "$                           0" + '\n' +
-                                                        "M0000000000000P0000000000000G"));
-    }
+//    @Test
+//    public void should_refresh_the_map_when_the_land_is_sold() throws Exception {
+//        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000100000000H0000000000000T" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "M0000000000000P0000000000000G"));
+//    }
+//
+//    @Test
+//    public void should_refresh_the_map_when_the_land_is_upgraded() throws Exception {
+//        map.refreshMapWhenLandsChanged(5);
+//        assertThat(map.refreshMapWhenLandsChanged(5),is("S0000200000000H0000000000000T" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "$                           0" + '\n' +
+//                                                        "M0000000000000P0000000000000G"));
+//    }
 
     @Test
     public void should_get_the_initial_balance_of_the_gamer() throws Exception {
@@ -104,7 +105,6 @@ public class RichManTest {
     @Test
     public void should_get_the_owner_of_the_land() throws Exception {
         gamer.setGamerName("A");
-        String gamerName = gamer.getGamerName();
         double costOfTheLand = currentLand.getPrice();
         currentLand.setOwner(gamer);
         gamer.minusBalanceOfTheGamer(costOfTheLand);

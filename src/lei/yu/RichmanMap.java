@@ -27,7 +27,18 @@ public class RichManMap {
             landsOnTheMap.get(i).setLandKind("$");
         }
         this.setThePriceOfTheLands();
+        this.setSpecialLandKinds();
     }
+
+    private void setSpecialLandKinds() {
+        landsOnTheMap.get(0).setSpecialLandKind("S");
+        landsOnTheMap.get(14).setSpecialLandKind("H");
+        landsOnTheMap.get(28).setSpecialLandKind("T");
+        landsOnTheMap.get(35).setSpecialLandKind("G");
+        landsOnTheMap.get(49).setSpecialLandKind("P");
+        landsOnTheMap.get(63).setSpecialLandKind("M");
+    }
+
     private String setMap(){
         String map = "";
         for(int i=0;i<29;i++){
@@ -75,7 +86,7 @@ public class RichManMap {
     }
 
     public String refreshMapWhenLandsChanged(int landPosition) {
-        if(this.landsOnTheMap.get(landPosition).isGamerIsOnThisLandOrNot()){
+        if(!this.landsOnTheMap.get(landPosition).getGamersOnThisLand().isEmpty()){
 
         }
         else{
@@ -114,50 +125,67 @@ public class RichManMap {
     public RichManLand getTheCurrentLandGamerIsOn(int gamerPosition){
         return landsOnTheMap.get(gamerPosition);
     }
-    public void setTheCurrentGamerOnTheLand(int gamerPosition,String gamerName){
-        landsOnTheMap.get(gamerPosition).setLandKind(gamerName);
-    }
+
     private static final Console console;
     static
     {
         console = Enigma.getConsole("大富翁游戏");
     }
 
-    private TextAttributes getTextColor(int textIndex){
+    public TextAttributes getTextColor(int textIndex){
         TextAttributes attributes = new TextAttributes(Color.WHITE);
         RichManLand land = landsOnTheMap.get(textIndex);
         if(land.getOwner() == null){
-
+            if(!land.getGamersOnThisLand().isEmpty()){
+                attributes = getTextColorWhenGamerIsOnTheLand(textIndex);
+            }
         }
         else{
-            if(land.isGamerIsOnThisLandOrNot()){
-                if(land.getLandKind().equals("Q")){
-                    attributes = new TextAttributes(Color.RED);
-                }
-                else if(land.getLandKind().equals("X")){
-                    attributes = new TextAttributes(Color.GREEN);
-                }
-                else if(land.getLandKind().equals("A")){
-                    attributes = new TextAttributes(Color.YELLOW);
-                }
-                else if(land.getLandKind().equals("J")){
-                    attributes = new TextAttributes(Color.BLUE);
-                }
+            if(land.getGamersOnThisLand().isEmpty()){
+                attributes = getTextColorWhenGamerNotOnTheLand(textIndex);
             }
             else{
-                if(land.getOwner().getGamerName().equals("Q")){
-                    attributes = new TextAttributes(Color.RED);
-                }
-                else if(land.getOwner().getGamerName().equals("X")){
-                    attributes = new TextAttributes(Color.GREEN);
-                }
-                else if(land.getOwner().getGamerName().equals("A")){
-                    attributes = new TextAttributes(Color.YELLOW);
-                }
-                else if(land.getOwner().getGamerName().equals("J")){
-                    attributes = new TextAttributes(Color.BLUE);
-                }
+                attributes = getTextColorWhenGamerIsOnTheLand(textIndex);
             }
+        }
+        return attributes;
+    }
+
+    private TextAttributes getTextColorWhenGamerIsOnTheLand(int landIndex){
+        TextAttributes attributes = new TextAttributes(Color.WHITE);
+        RichManLand land = landsOnTheMap.get(landIndex);
+        if(!land.getGamersOnThisLand().isEmpty()){
+            String gamerOnThisLand = land.getGamersOnThisLand().get(land.getGamersOnThisLand().size()-1);
+            if(gamerOnThisLand.equals("Q")){
+                attributes = new TextAttributes(Color.RED);
+            }
+            else if(gamerOnThisLand.equals("X")){
+                attributes = new TextAttributes(Color.GREEN);
+            }
+            else if(gamerOnThisLand.equals("A")){
+                attributes = new TextAttributes(Color.YELLOW);
+            }
+            else if(gamerOnThisLand.equals("J")){
+                attributes = new TextAttributes(Color.BLUE);
+            }
+        }
+        return attributes;
+    }
+
+    private TextAttributes getTextColorWhenGamerNotOnTheLand(int landIndex){
+        TextAttributes attributes = new TextAttributes(Color.WHITE);
+        RichManLand land = landsOnTheMap.get(landIndex);
+        if(land.getOwner().getGamerName().equals("Q")){
+            attributes = new TextAttributes(Color.RED);
+        }
+        else if(land.getOwner().getGamerName().equals("X")){
+            attributes = new TextAttributes(Color.GREEN);
+        }
+        else if(land.getOwner().getGamerName().equals("A")){
+            attributes = new TextAttributes(Color.YELLOW);
+        }
+        else if(land.getOwner().getGamerName().equals("J")){
+            attributes = new TextAttributes(Color.BLUE);
         }
         return attributes;
     }

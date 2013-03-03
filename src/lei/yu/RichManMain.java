@@ -18,7 +18,6 @@ public class RichManMain {
         System.out.println("请选择2~4位不重复玩家，输入编号即可。(1.钱夫人; 2.阿土伯; 3.孙小美; 4.金贝贝):");
         int[] gamerIndexes = getGamers();
 
-
         for(int i=0;i<numOfGamers;i++){
             richManGamers.add(new RichManGamer());
             richManGamers.get(i).setGamerName(gamerNames[gamerIndexes[i]-1]);
@@ -27,13 +26,9 @@ public class RichManMain {
             for(int i=0;i<numOfGamers;i++){
                 RichManGamer actionGamer = richManGamers.get(i);
                 int presentPosition = actionGamer.getPositionOfTheGamer();
-                RichManLand currentLand = map.getTheCurrentLandGamerIsOn(presentPosition);
                 map.refreshMapWhenLandsChanged(presentPosition);
-                if(!currentLand.getGamersOnThisLand().isEmpty()){
-                   currentLand.removeGamerOnThisLand();
-                }
                 gamerAction(actionGamer);
-                if(actionGamer.getBalanceOfTheGamer()<=0 && actionGamer.getLandNumOfGamer()==0){
+                if(actionGamer.getBalanceOfTheGamer()<=0 && actionGamer.getTotalLandNumOfGamer()==0){
                     System.out.println("对不起，您已经破产，游戏失败。");
                     richManGamers.remove(i);
                 }
@@ -69,112 +64,361 @@ public class RichManMain {
     private static void gamerAction(RichManGamer actionGamer){
         TextAttributes attributes = new TextAttributes(Color.WHITE);
         console.setTextAttributes(attributes);
-        System.out.print("玩家");
-        attributes = getTextColor(actionGamer.getGamerName());
-        console.setTextAttributes(attributes);
-        System.out.print("  "+actionGamer.getGamerName()+" ");
-        attributes = new TextAttributes(Color.WHITE);
-        console.setTextAttributes(attributes);
-        System.out.print("行动，请输入命令："+"\n");
-        String command = getCommand();
-        String gamerName = actionGamer.getGamerName();
-        int stepsGamerMoves;
+        boolean flagOfRollCommand = true;
+        do{
+            System.out.print("玩家");
+            attributes = getTextColor(actionGamer.getGamerName());
+            console.setTextAttributes(attributes);
+            System.out.print("  "+actionGamer.getGamerName()+" ");
+            attributes = new TextAttributes(Color.WHITE);
+            console.setTextAttributes(attributes);
+            System.out.print("行动，请输入命令："+"\n");
+            String command = getCommand();
+            String gamerName = actionGamer.getGamerName();
+            int stepsGamerMoves;
 
-        if(command.equals("roll")){
-            stepsGamerMoves = actionGamer.getRandomStepsBetween1and6();
-            actionGamer.setPositionOfTheGamer(stepsGamerMoves);
-            System.out.println("您骰到的点数为："+stepsGamerMoves+", 您可以移动"+stepsGamerMoves+"步。");
-            RichManLand currentLand = getSpecifiedLand(actionGamer.getPositionOfTheGamer());
-            String landKind = currentLand.getLandKind();
-            currentLand.addGamersOnThisLand(gamerName);
-            if(landKind.equals("S")||landKind.equals("H")||landKind.equals("T")||landKind.equals("G")||landKind.equals("P")
-                    ||landKind.equals("M")||landKind.equals("$")){
-                currentLand.setLandKind(gamerName);
-                currentLand.setLandKind(landKind);
-            }
-            else{
-                if(0==currentLand.getLevel()){
-                    System.out.println("您目前移动到一块空地，价值："+currentLand.getPrice()+",是否购买？(是[Y],否[N])");
-                    String ifBuy = getCommand();
-                    if(ifBuy.equalsIgnoreCase("Y")){
-                        actionGamer.minusBalanceOfTheGamer(currentLand.getPrice());
-                        if(actionGamer.getBalanceOfTheGamer()>0){
-                            System.out.println("购买成功！");
-                            currentLand.setOwner(actionGamer);
-                            currentLand.setLevel(currentLand.getLevel()+1);
-                            map.printMap();
-                            actionGamer.setLandNumOfGamer(1);
-                        }
-                        else{
-                            System.out.println("余额不足，购买失败！");
-                        }
-
+            if(command.equals("roll")){
+                int gamerPosition = actionGamer.getPositionOfTheGamer();
+                RichManLand currentLand = getSpecifiedLand(gamerPosition);
+                if(!currentLand.getGamersOnThisLand().isEmpty()){
+                   currentLand.removeGamerOnThisLand();
+                }
+                stepsGamerMoves = actionGamer.getRandomStepsBetween1and6();
+                stepsGamerMoves = checkIfTheGamerWillMeetBlock(gamerPosition, stepsGamerMoves);
+                if(checkIfTheGamerWillMeetBomb(gamerPosition,stepsGamerMoves)){
+                    actionGamer.setPositionOfTheGamer(15-gamerPosition);
+                    actionGamer.setRoundsInTheHospital(1);
+                }
+                actionGamer.setPositionOfTheGamer(stepsGamerMoves);
+                System.out.println("您骰到的点数为："+stepsGamerMoves+", 您可以移动"+stepsGamerMoves+"步。");
+                currentLand = getSpecifiedLand(actionGamer.getPositionOfTheGamer());
+                String landKind = currentLand.getSpecialLandKind();
+                System.out.println();
+                currentLand.addGamersOnThisLand(gamerName);
+                if(landKind.equals("S")||landKind.equals("H")||landKind.equals("T")||landKind.equals("G")||landKind.equals("P")
+                        ||landKind.equals("M")||landKind.equals("$")){
+                    if(landKind.equals("$")){
+                        actionGamer.addPoint(actionGamer.getPositionOfTheGamer());
                     }
+                    if(landKind.equals("T")&&checkIfTheGamerHasEnoughPoint(actionGamer,30)){
+                        enterTheToolRoom(actionGamer);
+                    }
+                    map.printMap();
                 }
                 else{
-                    RichManGamer currentLandOwner = currentLand.getOwner();
-                    if(currentLandOwner.getGamerName().equals(gamerName)){
-                        System.out.println("您移动到了您的土地，该土地目前等级为："+currentLand.getLevel()+"，升级需要"+currentLand.getPrice()+". 是否进行升级？(是[Y],否[N])");
-                        String ifUpgrade = getCommand();
-                        if(ifUpgrade.equalsIgnoreCase("Y")){
+                    if(currentLand.getOwner()==null){
+                        System.out.println("您目前移动到一块空地，价值：" + currentLand.getPrice() + ",是否购买？(是[Y],否[N])");
+                        String ifBuy = getCommand();
+                        if(ifBuy.equalsIgnoreCase("Y")){
                             actionGamer.minusBalanceOfTheGamer(currentLand.getPrice());
                             if(actionGamer.getBalanceOfTheGamer()>0){
-                                System.out.println("升级成功！");
+                                System.out.println("购买成功！");
                                 currentLand.setOwner(actionGamer);
-                                map.refreshMapWhenLandsChanged(actionGamer.getPositionOfTheGamer());
+                                map.printMap();
+                                actionGamer.addLevel0LandNumOfGamer(1);
                             }
                             else{
-                                System.out.println("余额不足，升级失败！");
+                                System.out.println("余额不足，购买失败！");
                             }
-                        }
-                        else{
-                            //不升级土地
+
                         }
                     }
                     else{
-                        System.out.print("您移动到了玩家");
-                        attributes = getTextColor(currentLandOwner.getGamerName());
-                        console.setTextAttributes(attributes);
-                        System.out.print("      "+currentLandOwner.getGamerName()+" ");
-                        attributes = new TextAttributes(Color.WHITE);
-                        console.setTextAttributes(attributes);
-                        System.out.print("的土地。"+"\n");
-                        double tolls = currentLand.getPrice()*currentLand.getLevel()*0.2;
-                        System.out.println("该土地收取过路费："+ tolls +"元。");
-                        actionGamer.minusBalanceOfTheGamer(tolls);
-                        currentLandOwner.addBalanceOfTheGamer(tolls);
-                        map.printMap();
+                        RichManGamer currentLandOwner = currentLand.getOwner();
+                        int landLevel = currentLand.getLevel()+1;
+                        if(currentLandOwner.getGamerName().equals(gamerName)){
+                            if(4==landLevel){
+                                System.out.println("您移动到了您的土地，该土地目前等级为："+landLevel+"，已经是最高等级，无法继续升级。");
+                            }
+                            else{
+                                System.out.println("您移动到了您的土地，该土地目前等级为："+landLevel+"，升级需要"+currentLand.getPrice()+". 是否进行升级？(是[Y],否[N])");
+                                String ifUpgrade = getCommand();
+                                if(ifUpgrade.equalsIgnoreCase("Y")){
+                                    actionGamer.minusBalanceOfTheGamer(currentLand.getPrice());
+                                    if(actionGamer.getBalanceOfTheGamer()>0){
+                                        System.out.println("升级成功！");
+                                        currentLand.setOwner(actionGamer);
+
+                                        currentLand.setLevel(landLevel);
+                                        switch(landLevel){
+                                            case 1:{
+                                                actionGamer.addLevel1LandNumOfGamer(1);
+                                                actionGamer.minusLevel0LandNumOfGamer(1);
+                                                break;
+                                            }
+                                            case 2:{
+                                                actionGamer.addLevel2LandNumOfGamer(1);
+                                                actionGamer.minusLevel1LandNumOfGamer(1);
+                                                break;
+                                            }
+                                            case 3:{
+                                                actionGamer.addLevel3LandNumOfGamer(1);
+                                                actionGamer.minusLevel2LandNumOfGamer(1);
+                                                break;
+                                            }
+                                        }
+                                        map.printMap();
+                                    }
+                                    else{
+                                        System.out.println("余额不足，升级失败！");
+                                    }
+                                }
+                                else{
+                                    //不升级土地
+                                }
+                            }
+
+                        }
+                        else{
+                            System.out.print("您移动到了玩家");
+                            attributes = getTextColor(currentLandOwner.getGamerName());
+                            console.setTextAttributes(attributes);
+                            System.out.print("      "+currentLandOwner.getGamerName()+" ");
+                            attributes = new TextAttributes(Color.WHITE);
+                            console.setTextAttributes(attributes);
+                            System.out.print("的土地。"+"\n");
+                            double tolls = currentLand.getPrice()*(currentLand.getLevel()+1)*0.2;
+                            System.out.println("该土地收取过路费："+ tolls +"元。");
+                            actionGamer.minusBalanceOfTheGamer(tolls);
+                            currentLandOwner.addBalanceOfTheGamer(tolls);
+                            map.printMap();
+                        }
                     }
+
                 }
+                flagOfRollCommand = false;
+            }
+            if(command.startsWith("sell")){
+                int indexOfLand = Integer.valueOf(command.substring(5));
+                sellLand(actionGamer,indexOfLand);
 
             }
+            if(command.equals("query")){
+                queryBalanceInformation(actionGamer);
+            }
+            if(command.startsWith("block")){
+                String subCommand = command.substring(6);
+                int blockIndex;
+                if(subCommand.startsWith("-")){
+                    blockIndex = 0-Integer.valueOf(subCommand.substring(1));
+                }
+                else{
+                    blockIndex = Integer.valueOf(subCommand);
+                }
+                setBlockOnTheLand(actionGamer, blockIndex);
+                map.printMap();
+            }
+            if(command.startsWith("bomb")){
+                String subCommand = command.substring(5);
+                int bombIndex;
+                if(subCommand.startsWith("-")){
+                    bombIndex = 0-Integer.valueOf(subCommand.substring(1));
+                }
+                else{
+                    bombIndex = Integer.valueOf(subCommand);
+                }
+                setBombOnTheLand(actionGamer, bombIndex);
+                map.printMap();
+            }
+        }while(flagOfRollCommand);
+    }
 
+    private static boolean checkIfTheGamerWillMeetBomb(int gamerPosition, int stepsGamerMoves) {
+        boolean meetBomb = false;
+        for(int i=0;i<stepsGamerMoves;i++){
+            RichManLand landOnTheWay = map.getTheCurrentLandGamerIsOn(gamerPosition+i);
+            String landKind = landOnTheWay.getSpecialLandKind();
+            if(landKind.equals("@")){
+                meetBomb = true;
+                System.out.println("您遇到了炸弹，将被送到医院医治3轮。");
+                landOnTheWay.setSpecialLandKind("0");
+                break;
+            }
         }
-        if(command.startsWith("sell")){
-            int indexOfLand = Integer.valueOf(command.substring(5));
-            RichManLand sellLand = getSpecifiedLand(indexOfLand);
+        return meetBomb;
+    }
+
+    private static int checkIfTheGamerWillMeetBlock(int gamerPosition, int stepsGamerMoves) {
+        int steps = stepsGamerMoves;
+        for(int i=0;i<stepsGamerMoves;i++){
+            RichManLand landOnTheWay = map.getTheCurrentLandGamerIsOn(gamerPosition+i);
+            String landKind = landOnTheWay.getSpecialLandKind();
+            if(landKind.equals("#")){
+                steps = i;
+                System.out.println("您遇到了路障，只能移动" + steps + "歩。");
+                landOnTheWay.setSpecialLandKind("0");
+                break;
+            }
+            if(landKind.equals("@")){
+                steps = i;
+                break;
+            }
+        }
+        return steps;
+    }
+
+    private static void setBombOnTheLand(RichManGamer actionGamer, int bombIndex) {
+        int numOfBomb = actionGamer.getNumOfBlock();
+        int positionOfBomb = actionGamer.getPositionOfTheGamer()+bombIndex;
+        if(positionOfBomb<0){
+            positionOfBomb = 70-positionOfBomb;
+        }
+        if(positionOfBomb>69){
+            positionOfBomb = positionOfBomb-70;
+        }
+        RichManLand currentLand = map.getTheCurrentLandGamerIsOn(positionOfBomb);
+        if(!currentLand.getGamersOnThisLand().isEmpty()){
+            System.out.println("该位置目前已有玩家，不能放置炸弹。");
+        }
+        else if(currentLand.getSpecialLandKind().equals("#")){
+            System.out.println("该位置已设置路障，不能再设置炸弹。");
+        }
+        else{
+            if(numOfBomb>0){
+                map.getTheCurrentLandGamerIsOn(positionOfBomb).setSpecialLandKind("@");
+                actionGamer.minusNumOfBomb(1);
+                System.out.println("使用炸弹道具成功！已将炸弹设置在距离目前位置"+bombIndex+"的位置处。");
+            }
+            else{
+                System.out.println("对不起，您的炸弹道具不足。设置炸弹失败。");
+            }
+        }
+    }
+
+    private static void sellLand(RichManGamer actionGamer, int indexOfLand) {
+        RichManLand sellLand = getSpecifiedLand(indexOfLand);
+        String gamerName = actionGamer.getGamerName();
+        if(sellLand.getOwner()!=null){
             if(sellLand.getOwner().getGamerName().equals(gamerName)){
                 System.out.println("您是否准备出售该块土地？(是[Y],否[N])");
                 String ifSell = getCommand();
                 if(ifSell.equalsIgnoreCase("Y")){
-                    double currentLandCost = sellLand.getLevel()*sellLand.getPrice();
+                    double currentLandCost = sellLand.getLevel()*sellLand.getPrice()*2;
                     actionGamer.addBalanceOfTheGamer(currentLandCost);
                     sellLand.setLandKind("0");
                     sellLand.setLevel(0);
+                    sellLand.setOwner(null);
                     System.out.println("出售成功！您的余额增加了："+currentLandCost+".");
-                    actionGamer.getPositionOfTheGamer();
+                    switch (sellLand.getLevel()){
+                        case 0:actionGamer.minusLevel0LandNumOfGamer(1); break;
+                        case 1:actionGamer.minusLevel1LandNumOfGamer(1); break;
+                        case 2:actionGamer.minusLevel2LandNumOfGamer(1); break;
+                        case 3:actionGamer.minusLevel3LandNumOfGamer(1); break;
+                    }
                     map.printMap();
                 }
             }
             else{
                 System.out.println("这并不是您的土地，不能出售。");
             }
-
         }
-        if(command.equals("query")){
+    }
 
+    private static void queryBalanceInformation(RichManGamer actionGamer) {
+        System.out.println("您的资产信息：");
+        System.out.println("资金："+actionGamer.getBalanceOfTheGamer()+"元");
+        System.out.println("点数："+actionGamer.getPoint());
+        System.out.println("地产：空地"+actionGamer.getLevel0LandNumOfGamerLandNumOfGamer()+"处，"+
+                "茅屋"+actionGamer.getLevel1LandNumOfGamerLandNumOfGamer()+"处，"+
+                "洋房"+actionGamer.getLevel2LandNumOfGamerLandNum2fGamer()+"处，"+
+                "摩天大楼"+actionGamer.getLevel3LandNumOfGamerLandNumOfGamer()+"处");
+        System.out.println("道具：路障" + actionGamer.getNumOfBlock() + "个；" +
+                "炸弹" + actionGamer.getNumOfBomb() + "个；" +
+                "机器娃娃" + actionGamer.getNumOfRobot() + "个");
+    }
+
+    private static void setBlockOnTheLand(RichManGamer actionGamer, int blockIndex) {
+        int numOfBlock = actionGamer.getNumOfBlock();
+        int positionOfBlock = actionGamer.getPositionOfTheGamer()+blockIndex;
+        if(positionOfBlock<0){
+            positionOfBlock = 70-positionOfBlock;
+        }
+        if(positionOfBlock>69){
+            positionOfBlock = positionOfBlock-70;
+        }
+        RichManLand currentLand = map.getTheCurrentLandGamerIsOn(positionOfBlock);
+        if(!currentLand.getGamersOnThisLand().isEmpty()){
+            System.out.println("该位置目前已有玩家，不能放置路障。");
+        }
+        else if(currentLand.getSpecialLandKind().equals("@")){
+            System.out.println("该位置已设置炸弹，不能再设置路障。");
+        }
+        else{
+            if(numOfBlock>0){
+                map.getTheCurrentLandGamerIsOn(positionOfBlock).setSpecialLandKind("#");
+                actionGamer.minusNumOfBlock(1);
+                System.out.println("使用路障道具成功！已将路障设置在距离目前位置"+blockIndex+"的位置处。");
+            }
+            else{
+                System.out.println("对不起，您的路障道具不足。设置路障失败。");
+            }
         }
 
+    }
+
+    private static void enterTheToolRoom(RichManGamer actionGamer) {
+        System.out.println("欢迎光临道具屋， 请选择您所需要的道具：");
+        System.out.print("道具        编号    价值（点数）    显示方式\n" +
+                "路障         1         50             ＃\n" +
+                "机器娃娃     2         30\n" +
+                "炸 弹        3         50             @\n");
+        System.out.println("按“F”可手工退出道具屋。");
+        String command = getCommand();
+        if(command.equals("F")){}
+        else{
+            int toolIndex = Integer.valueOf(command);
+            buyTheTool(actionGamer,toolIndex);
+        }
+    }
+
+    private static void buyTheTool(RichManGamer actionGamer,int toolIndex) {
+        int totalNumOfTool = actionGamer.getNumOfBlock()+actionGamer.getNumOfBomb()+actionGamer.getNumOfRobot();
+        if(totalNumOfTool>=10){
+            System.out.println("您已经拥有10件道具，不能再继续购买道具。");
+        }
+        else{
+            boolean enoughPoint;
+            switch(toolIndex){
+                case 1:{
+                    enoughPoint = checkIfTheGamerHasEnoughPoint(actionGamer,50);
+                    if(enoughPoint){
+                        actionGamer.addNumOfBlock(1);
+                        actionGamer.minusPoint(50);
+                        System.out.println("购买路障道具成功！");
+                    }
+                    else{
+                        System.out.println("您当前剩余的点数为"+actionGamer.getPoint()+"， 不足以购买路障道具。");
+                    }
+                    break;
+                }
+                case 2:{
+                    actionGamer.addNumOfRobot(1);
+                    actionGamer.minusPoint(30);
+                    System.out.println("购买机器娃娃道具成功！");
+                    break;
+                }
+                case 3:{
+                    enoughPoint = checkIfTheGamerHasEnoughPoint(actionGamer,50);
+                    if(enoughPoint){
+                        actionGamer.addNumOfBomb(1);
+                        actionGamer.minusPoint(50);
+                        System.out.println("购买炸弹道具成功！");
+                    }
+                    else{
+                        System.out.println("您当前剩余的点数为"+actionGamer.getPoint()+"， 不足以购买炸弹道具。");
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private static boolean checkIfTheGamerHasEnoughPoint(RichManGamer actionGamer,int point){
+        boolean enoughPoint = false;
+        if(actionGamer.getPoint()>=point){
+            enoughPoint = true;
+        }
+        return enoughPoint;
     }
 
     private static TextAttributes getTextColor(String gamerName){
