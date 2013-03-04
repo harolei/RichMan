@@ -14,6 +14,15 @@ public class RichManGamer {
     private int numOfRobot = 10;
     private int roundsInTheHospital = 0;
     private int roundsInThePrison= 0;
+    private int roundsWithLuckyGod = 0;
+
+    public int getRoundsWithLuckyGod() {
+        return roundsWithLuckyGod;
+    }
+
+    public void setRoundsWithLuckyGod(int roundsWithLuckyGod) {
+        this.roundsWithLuckyGod = roundsWithLuckyGod;
+    }
 
     public int getRoundsInThePrison() {
         return roundsInThePrison;
@@ -71,16 +80,7 @@ public class RichManGamer {
         return point;
     }
 
-    public void addPoint(int landIndex) {
-        int point = 0;
-        switch(landIndex){
-            case 69: point = 60; break;
-            case 68: point = 80; break;
-            case 67: point = 40; break;
-            case 66: point = 100; break;
-            case 65: point = 80; break;
-            case 64: point = 20; break;
-        }
+    public void addPoint(int point) {
         this.point += point;
     }
 

@@ -66,10 +66,10 @@ public class RichManMain {
     }
 
     private static void gamerAction(RichManGamer actionGamer){
-        TextAttributes attributes = new TextAttributes(Color.WHITE);
-        console.setTextAttributes(attributes);
         boolean flagOfRollCommand = true;
         do{
+            TextAttributes attributes = new TextAttributes(Color.WHITE);
+            console.setTextAttributes(attributes);
             System.out.print("玩家");
             attributes = getTextColor(actionGamer.getGamerName());
             console.setTextAttributes(attributes);
@@ -90,21 +90,26 @@ public class RichManMain {
                 System.out.println("您骰到的点数为："+stepsGamerMoves+", 您可以移动"+stepsGamerMoves+"步。");
                 stepsGamerMoves = checkIfTheGamerWillMeetBlock(gamerPosition, stepsGamerMoves);
                 if(checkIfTheGamerWillMeetBomb(gamerPosition,stepsGamerMoves)){
-                    actionGamer.setPositionOfTheGamer(14-gamerPosition);
-                    actionGamer.setRoundsInTheHospital(1);
-                    getSpecifiedLand(14).addGamersOnThisLand(actionGamer.getGamerName());
+                    setTheGamerKeptInHospital(actionGamer);
+                    currentLand.setSpecialLandKind("0");
+                    currentLand.setSpecialLandKind(currentLand.getLandKind());
                     map.printMap();
                 }
                 else{
                     normalMove(actionGamer,stepsGamerMoves);
                 }
-
                 flagOfRollCommand = false;
             }
             if(command.startsWith("sell")){
-                int indexOfLand = Integer.valueOf(command.substring(5));
-                sellLand(actionGamer,indexOfLand);
-
+                if(command.substring(4).startsWith("T")){
+                    int toolIndex = Integer.valueOf(command.substring(9));
+                    sellTool(actionGamer,toolIndex);
+                }
+                else{
+                    int indexOfLand = Integer.valueOf(command.substring(5));
+                    sellLand(actionGamer,indexOfLand);
+                    map.printMap();
+                }
             }
             if(command.equals("query")){
                 queryBalanceInformation(actionGamer);
@@ -145,18 +150,23 @@ public class RichManMain {
         String gamerName = actionGamer.getGamerName();
         actionGamer.setPositionOfTheGamer(stepsGamerMoves);
         currentLand = getSpecifiedLand(actionGamer.getPositionOfTheGamer());
+        currentLand.setSpecialLandKind("0");
+        currentLand.setSpecialLandKind(currentLand.getLandKind());
         String landKind = currentLand.getSpecialLandKind();
         currentLand.addGamersOnThisLand(gamerName);
         if(landKind.equals("S")||landKind.equals("H")||landKind.equals("T")||landKind.equals("G")||landKind.equals("P")
                 ||landKind.equals("M")||landKind.equals("$")){
             if(landKind.equals("$")){
-                actionGamer.addPoint(actionGamer.getPositionOfTheGamer());
+                addPointOfGamer(actionGamer);
             }
             if(landKind.equals("T")&&checkIfTheGamerHasEnoughPoint(actionGamer,30)){
                 enterTheToolRoom(actionGamer);
             }
             if(landKind.equals("P")){
                 setTheGamerKeptInPrison(actionGamer);
+            }
+            if(landKind.equals("G")){
+                enterTheGiftRoom(actionGamer);
             }
             map.printMap();
         }
@@ -171,12 +181,46 @@ public class RichManMain {
 
                 }
                 else{
-                    moveToOtherGamersLand(actionGamer,currentLandOwner);
+                    if(checkIfTheGamerIsWithTheLuckyGod(actionGamer)){
+                        actionGamer.setRoundsWithLuckyGod(actionGamer.getRoundsWithLuckyGod()+1);
+                        System.out.println("福神附身，免交过路费！");
+                    }
+                    else{
+                        moveToOtherGamersLand(actionGamer,currentLandOwner);
+                    }
                     map.printMap();
                 }
             }
 
         }
+    }
+
+    private static void addPointOfGamer(RichManGamer actionGamer) {
+        int landIndex = actionGamer.getPositionOfTheGamer();
+        int point= 0;
+        switch(landIndex){
+            case 69: point = 60; break;
+            case 68: point = 80; break;
+            case 67: point = 40; break;
+            case 66: point = 100; break;
+            case 65: point = 80; break;
+            case 64: point = 20; break;
+        }
+        System.out.println("恭喜您获得"+point+"点！");
+        actionGamer.addPoint(point);
+    }
+
+    private static boolean checkIfTheGamerIsWithTheLuckyGod(RichManGamer actionGamer) {
+        boolean isWithLuckyGod = false;
+        int roundsWithLuckyGod = actionGamer.getRoundsWithLuckyGod();
+        if(roundsWithLuckyGod>0&&roundsWithLuckyGod<6){
+            isWithLuckyGod = true;
+            actionGamer.setRoundsWithLuckyGod(roundsWithLuckyGod+1);
+        }
+        else{
+            actionGamer.setRoundsWithLuckyGod(0);
+        }
+        return isWithLuckyGod;
     }
 
     private static void clearBombsAndBlocksIn10Steps(RichManGamer actionGamer) {
@@ -188,8 +232,8 @@ public class RichManMain {
                 specifiedLand.setSpecialLandKind("0");
                 specifiedLand.setSpecialLandKind(specifiedLand.getLandKind());
                 actionGamer.minusNumOfRobot(1);
-                System.out.println("使用机器人道具成功，已成功清理前方10歩内的路障及炸弹！");
             }
+            System.out.println("使用机器人道具成功，已成功清理前方10歩内的路障及炸弹！");
         }
         else{
             System.out.println("机器人道具不足，使用道具失败！");
@@ -224,6 +268,13 @@ public class RichManMain {
 
     private static void setTheGamerKeptInPrison(RichManGamer actionGamer) {
         actionGamer.setRoundsInThePrison(1);
+    }
+
+    private static void setTheGamerKeptInHospital(RichManGamer actionGamer){
+        int gamerPosition = actionGamer.getPositionOfTheGamer();
+        actionGamer.setPositionOfTheGamer(14-gamerPosition);
+        actionGamer.setRoundsInTheHospital(1);
+        getSpecifiedLand(14).addGamersOnThisLand(actionGamer.getGamerName());
     }
 
     private static void buyLand(RichManGamer actionGamer,RichManLand currentLand){
@@ -309,8 +360,13 @@ public class RichManMain {
 
     private static boolean checkIfTheGamerWillMeetBomb(int gamerPosition, int stepsGamerMoves) {
         boolean meetBomb = false;
+        int checkPosition;
         for(int i=0;i<=stepsGamerMoves;i++){
-            RichManLand landOnTheWay = map.getTheCurrentLandGamerIsOn(gamerPosition+i);
+            checkPosition = gamerPosition+i;
+            if(checkPosition>69){
+                checkPosition = checkPosition-70;
+            }
+            RichManLand landOnTheWay = map.getTheCurrentLandGamerIsOn(checkPosition);
             String landKind = landOnTheWay.getSpecialLandKind();
             if(landKind.equals("@")){
                 meetBomb = true;
@@ -324,8 +380,13 @@ public class RichManMain {
 
     private static int checkIfTheGamerWillMeetBlock(int gamerPosition, int stepsGamerMoves) {
         int steps = stepsGamerMoves;
+        int checkPosition;
         for(int i=0;i<=stepsGamerMoves;i++){
-            RichManLand landOnTheWay = map.getTheCurrentLandGamerIsOn(gamerPosition+i);
+            checkPosition = gamerPosition+i;
+            if(checkPosition>69){
+                checkPosition = checkPosition-70;
+            }
+            RichManLand landOnTheWay = map.getTheCurrentLandGamerIsOn(checkPosition);
             String landKind = landOnTheWay.getSpecialLandKind();
             if(landKind.equals("#")){
                 steps = i;
@@ -401,6 +462,74 @@ public class RichManMain {
         }
     }
 
+    private static void sellTool(RichManGamer actionGamer, int toolIndex) {
+        int sellNum;
+        int toolNum;
+        int addPoint;
+        switch(toolIndex){
+            case 1:{
+                if(actionGamer.getNumOfBlock()>0){
+                    toolNum = actionGamer.getNumOfBlock();
+                    System.out.println("您有路障道具"+toolNum+"个。请输入您打算出售的道具个数：");
+                    sellNum = Integer.valueOf(getCommand());
+                    if(sellNum<toolNum){
+                        addPoint = 50*sellNum;
+                        System.out.println("出售成功！您的点数增加了"+addPoint+"点！");
+                        actionGamer.addPoint(addPoint);
+                        actionGamer.minusNumOfBlock(sellNum);
+                    }
+                    else{
+                        System.out.println("出售失败！希望出售的道具数量大于您拥有的道具量。");
+                    }
+                }
+                else{
+                    System.out.println("出售失败！您现在没有路障道具，无法出售。");
+                }
+                break;
+            }
+            case 2:{
+                if(actionGamer.getNumOfBomb()>0){
+                    toolNum = actionGamer.getNumOfBomb();
+                    System.out.println("您有炸弹道具"+toolNum+"个。请输入您打算出售的道具个数：");
+                    sellNum = Integer.valueOf(getCommand());
+                    if(sellNum<toolNum){
+                        addPoint = 50*sellNum;
+                        System.out.println("出售成功！您的点数增加了"+addPoint+"点！");
+                        actionGamer.addPoint(addPoint);
+                        actionGamer.minusNumOfBomb(sellNum);
+                    }
+                    else{
+                        System.out.println("出售失败！希望出售的道具数量大于您拥有的道具量。");
+                    }
+                }
+                else{
+                    System.out.println("出售失败！您现在没有炸弹道具，无法出售。");
+                }
+                break;
+            }
+            case 3:{
+                if(actionGamer.getNumOfRobot()>0){
+                    toolNum = actionGamer.getNumOfRobot();
+                    System.out.println("您有机器娃娃道具"+toolNum+"个。请输入您打算出售的道具个数：");
+                    sellNum = Integer.valueOf(getCommand());
+                    if(sellNum<toolNum){
+                        addPoint = 30*sellNum;
+                        System.out.println("出售成功！您的点数增加了"+addPoint+"点！");
+                        actionGamer.addPoint(addPoint);
+                        actionGamer.minusNumOfRobot(sellNum);
+                    }
+                    else{
+                        System.out.println("出售失败！希望出售的道具数量大于您拥有的道具量。");
+                    }
+                }
+                else{
+                    System.out.println("出售失败！您现在没有机器娃娃道具，无法出售。");
+                }
+                break;
+            }
+        }
+    }
+
     private static void queryBalanceInformation(RichManGamer actionGamer) {
         System.out.println("您的资产信息：");
         System.out.println("资金："+actionGamer.getBalanceOfTheGamer()+"元");
@@ -451,13 +580,44 @@ public class RichManMain {
         System.out.print("道具        编号    价值（点数）    显示方式\n" +
                 "路障         1         50             ＃\n" +
                 "机器娃娃     2         30\n" +
-                "炸 弹        3         50             @\n");
+                "炸弹         3         50             @\n");
         System.out.println("按“F”可手工退出道具屋。");
         String command = getCommand();
         if(command.equals("F")){}
         else{
             int toolIndex = Integer.valueOf(command);
             buyTheTool(actionGamer,toolIndex);
+        }
+    }
+
+    private static void enterTheGiftRoom(RichManGamer actionGamer) {
+        System.out.println("欢迎光临礼品屋， 请选择您想要的礼品：");
+        System.out.print("礼品        编号      备注\n" +
+                          "奖金         1        2000元\n" +
+                          "点数         2        200点\n" +
+                          "福神         3        福神附身，路过其它玩家地盘，均可免费。5轮内有效。\n");
+        String command = getCommand();
+        int giftIndex = Integer.valueOf(command);
+        getTheGift(actionGamer, giftIndex);
+    }
+
+    private static void getTheGift(RichManGamer actionGamer, int giftIndex) {
+        switch(giftIndex){
+            case 1:{
+                actionGamer.addBalanceOfTheGamer(2000);
+                System.out.println("礼物选择成功！您的资金增加了2000元。");
+                break;
+            }
+            case 2:{
+                actionGamer.addPoint(200);
+                System.out.println("礼物选择成功！您的点数增加了200点。");
+                break;
+            }
+            case 3:{
+                actionGamer.setRoundsWithLuckyGod(1);
+                System.out.println("礼物选择成功！您现在有福神附身，5轮内路过别人的土地免收过路费。");
+                break;
+            }
         }
     }
 
