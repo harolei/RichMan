@@ -10,9 +10,18 @@ public class RichManGamer {
     private int level3LandNumOfGamer = 0;
     private int point = 0;
     private int numOfBlock = 10;
-    private int numOfBomb = 0;
-    private int numOfRobot = 0;
+    private int numOfBomb = 10;
+    private int numOfRobot = 10;
     private int roundsInTheHospital = 0;
+    private int roundsInThePrison= 0;
+
+    public int getRoundsInThePrison() {
+        return roundsInThePrison;
+    }
+
+    public void setRoundsInThePrison(int roundsInThePrison) {
+        this.roundsInThePrison = roundsInThePrison;
+    }
 
     public int getRoundsInTheHospital() {
         return roundsInTheHospital;
@@ -51,11 +60,11 @@ public class RichManGamer {
     }
 
     public void addNumOfRobot(int numOfRobot){
-        this.numOfBomb += numOfBomb;
+        this.numOfRobot += numOfRobot;
     }
 
     public void minusNumOfRobot(int numOfRobot){
-        this.numOfBomb -= numOfBomb;
+        this.numOfRobot -= numOfRobot;
     }
 
     public int getPoint() {
