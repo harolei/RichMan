@@ -89,6 +89,9 @@ public class RichManMain {
                 stepsGamerMoves = actionGamer.getRandomStepsBetween1and6();
                 System.out.println("您骰到的点数为："+stepsGamerMoves+", 您可以移动"+stepsGamerMoves+"步。");
                 stepsGamerMoves = checkIfTheGamerWillMeetBlock(gamerPosition, stepsGamerMoves);
+                if(checkIfTheGamerIsWithTheLuckyGod(actionGamer)){
+                    actionGamer.addRoundsWithLuckyGod(1);
+                }
                 if(checkIfTheGamerWillMeetBomb(gamerPosition,stepsGamerMoves)){
                     setTheGamerKeptInHospital(actionGamer);
                     currentLand.setSpecialLandKind("0");
@@ -182,7 +185,6 @@ public class RichManMain {
                 }
                 else{
                     if(checkIfTheGamerIsWithTheLuckyGod(actionGamer)){
-                        actionGamer.setRoundsWithLuckyGod(actionGamer.getRoundsWithLuckyGod()+1);
                         System.out.println("福神附身，免交过路费！");
                     }
                     else{
@@ -215,10 +217,10 @@ public class RichManMain {
         int roundsWithLuckyGod = actionGamer.getRoundsWithLuckyGod();
         if(roundsWithLuckyGod>0&&roundsWithLuckyGod<6){
             isWithLuckyGod = true;
-            actionGamer.setRoundsWithLuckyGod(roundsWithLuckyGod+1);
+            actionGamer.addRoundsWithLuckyGod(1);
         }
         else{
-            actionGamer.setRoundsWithLuckyGod(0);
+            actionGamer.addRoundsWithLuckyGod(-6);
         }
         return isWithLuckyGod;
     }
@@ -282,7 +284,7 @@ public class RichManMain {
         String ifBuy = getCommand();
         if(ifBuy.equalsIgnoreCase("Y")){
             actionGamer.minusBalanceOfTheGamer(currentLand.getPrice());
-            if(actionGamer.getBalanceOfTheGamer()>0){
+            if(actionGamer.getBalanceOfTheGamer()>=0){
                 System.out.println("购买成功！");
                 currentLand.setOwner(actionGamer);
                 map.printMap();
@@ -441,7 +443,7 @@ public class RichManMain {
                 System.out.println("您是否准备出售该块土地？(是[Y],否[N])");
                 String ifSell = getCommand();
                 if(ifSell.equalsIgnoreCase("Y")){
-                    double currentLandCost = sellLand.getLevel()*sellLand.getPrice()*2;
+                    double currentLandCost = (sellLand.getLevel()+1)*sellLand.getPrice()*2;
                     actionGamer.addBalanceOfTheGamer(currentLandCost);
                     sellLand.setLandKind("0");
                     sellLand.setLevel(0);
@@ -453,7 +455,6 @@ public class RichManMain {
                         case 2:actionGamer.minusLevel2LandNumOfGamer(1); break;
                         case 3:actionGamer.minusLevel3LandNumOfGamer(1); break;
                     }
-                    map.printMap();
                 }
             }
             else{
@@ -614,7 +615,7 @@ public class RichManMain {
                 break;
             }
             case 3:{
-                actionGamer.setRoundsWithLuckyGod(1);
+                actionGamer.addRoundsWithLuckyGod(1);
                 System.out.println("礼物选择成功！您现在有福神附身，5轮内路过别人的土地免收过路费。");
                 break;
             }

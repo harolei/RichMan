@@ -136,7 +136,13 @@ public class RichManMap {
         TextAttributes attributes = new TextAttributes(Color.WHITE);
         RichManLand land = landsOnTheMap.get(textIndex);
         if(land.getOwner() == null){
-            if(!land.getGamersOnThisLand().isEmpty()){
+            if(land.getSpecialLandKind().equals("@")){
+                attributes = new TextAttributes(Color.ORANGE);
+            }
+            else if(land.getSpecialLandKind().equals("#")){
+                attributes = new TextAttributes(Color.DARK_GRAY);
+            }
+            else if(!land.getGamersOnThisLand().isEmpty()){
                 attributes = getTextColorWhenGamerIsOnTheLand(textIndex);
             }
         }

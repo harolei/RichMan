@@ -1,17 +1,17 @@
 package lei.yu;
 
 public class RichManGamer {
-    private double balanceOfTheGamer;
-    private int positionOfTheGamer;
+    private double balanceOfTheGamer = 10000;
+    private int positionOfTheGamer = 0;
     private String gamerName;
     private int level0LandNumOfGamer = 0;
     private int level1LandNumOfGamer = 0;
     private int level2LandNumOfGamer = 0;
     private int level3LandNumOfGamer = 0;
     private int point = 0;
-    private int numOfBlock = 10;
-    private int numOfBomb = 10;
-    private int numOfRobot = 10;
+    private int numOfBlock = 1;
+    private int numOfBomb = 1;
+    private int numOfRobot = 1;
     private int roundsInTheHospital = 0;
     private int roundsInThePrison= 0;
     private int roundsWithLuckyGod = 0;
@@ -20,8 +20,8 @@ public class RichManGamer {
         return roundsWithLuckyGod;
     }
 
-    public void setRoundsWithLuckyGod(int roundsWithLuckyGod) {
-        this.roundsWithLuckyGod = roundsWithLuckyGod;
+    public void addRoundsWithLuckyGod(int roundsWithLuckyGod) {
+        this.roundsWithLuckyGod += roundsWithLuckyGod;
     }
 
     public int getRoundsInThePrison() {
@@ -141,8 +141,6 @@ public class RichManGamer {
     }
 
     public RichManGamer(){
-        this.balanceOfTheGamer = 10000;
-        this.positionOfTheGamer = 0;
     }
 
     public double getBalanceOfTheGamer() {
