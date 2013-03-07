@@ -20,8 +20,8 @@ public class RichManGamer {
         return roundsWithLuckyGod;
     }
 
-    public void addRoundsWithLuckyGod(int roundsWithLuckyGod) {
-        this.roundsWithLuckyGod += roundsWithLuckyGod;
+    public void setRoundsWithLuckyGod(int roundsWithLuckyGod) {
+        this.roundsWithLuckyGod = roundsWithLuckyGod;
     }
 
     public int getRoundsInThePrison() {

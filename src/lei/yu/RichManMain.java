@@ -89,9 +89,7 @@ public class RichManMain {
                 stepsGamerMoves = actionGamer.getRandomStepsBetween1and6();
                 System.out.println("您骰到的点数为："+stepsGamerMoves+", 您可以移动"+stepsGamerMoves+"步。");
                 stepsGamerMoves = checkIfTheGamerWillMeetBlock(gamerPosition, stepsGamerMoves);
-                if(checkIfTheGamerIsWithTheLuckyGod(actionGamer)){
-                    actionGamer.addRoundsWithLuckyGod(1);
-                }
+                checkIfTheGamerIsWithTheLuckyGod(actionGamer);
                 if(checkIfTheGamerWillMeetBomb(gamerPosition,stepsGamerMoves)){
                     setTheGamerKeptInHospital(actionGamer);
                     currentLand.setSpecialLandKind("0");
@@ -217,10 +215,10 @@ public class RichManMain {
         int roundsWithLuckyGod = actionGamer.getRoundsWithLuckyGod();
         if(roundsWithLuckyGod>0&&roundsWithLuckyGod<6){
             isWithLuckyGod = true;
-            actionGamer.addRoundsWithLuckyGod(1);
+            actionGamer.setRoundsWithLuckyGod(roundsWithLuckyGod+1);
         }
         else{
-            actionGamer.addRoundsWithLuckyGod(-6);
+            actionGamer.setRoundsWithLuckyGod(0);
         }
         return isWithLuckyGod;
     }
@@ -260,15 +258,16 @@ public class RichManMain {
         int roundsInPrison = actionGamer.getRoundsInThePrison();
         if(roundsInPrison>0&&roundsInPrison<3){
             isInPrison = true;
-            actionGamer.setRoundsInTheHospital(roundsInPrison+1);
+            actionGamer.setRoundsInThePrison(roundsInPrison+1);
         }
         else{
-            actionGamer.setRoundsInTheHospital(0);
+            actionGamer.setRoundsInThePrison(0);
         }
         return isInPrison;
     }
 
     private static void setTheGamerKeptInPrison(RichManGamer actionGamer) {
+        System.out.println("您到了监狱，将被扣留两局。");
         actionGamer.setRoundsInThePrison(1);
     }
 
@@ -615,7 +614,7 @@ public class RichManMain {
                 break;
             }
             case 3:{
-                actionGamer.addRoundsWithLuckyGod(1);
+                actionGamer.setRoundsWithLuckyGod(1);
                 System.out.println("礼物选择成功！您现在有福神附身，5轮内路过别人的土地免收过路费。");
                 break;
             }
